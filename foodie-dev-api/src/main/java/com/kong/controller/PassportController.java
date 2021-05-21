@@ -1,9 +1,11 @@
 package com.kong.controller;
 
 import com.kong.enums.ExceptionEnum;
+import com.kong.pojo.Users;
 import com.kong.pojo.bo.UserBO;
 import com.kong.service.UserService;
 import com.kong.utils.IMOOCJSONResult;
+import com.kong.utils.MD5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -61,5 +63,24 @@ public class PassportController {
         userService.createUser(userBO);
 
         return IMOOCJSONResult.ok();
+    }
+
+    @PostMapping("/login")
+    @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
+    public IMOOCJSONResult login(@RequestBody UserBO userBO) throws Exception{
+        String username = userBO.getUsername();
+        String password = userBO.getPassword();
+
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            return IMOOCJSONResult.errorMsg(ExceptionEnum.NEED_USERNAME_PASSWORD.getMsg());
+        }
+
+        Users userResult = userService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
+
+        if (userResult == null) {
+            return IMOOCJSONResult.ok(userResult);
+        }
+
+        return IMOOCJSONResult.ok(userResult);
     }
 }

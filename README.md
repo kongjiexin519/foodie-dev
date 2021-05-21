@@ -9,3 +9,6 @@ http://localhost:8088/doc.html
     - 输入./startup.sh 启动tomcat
 - 打开网址
 http://localhost:8080/foodie-shop/
+
+#####  Failed to connect to github.com port 443: Operation timed out
+git config --global http.sslBackend "openssl"

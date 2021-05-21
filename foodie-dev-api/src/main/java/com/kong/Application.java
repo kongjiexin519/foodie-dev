@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan(basePackages = "com.kong.mapper")
 @ComponentScan(basePackages = {"com.kong", "org.n3r.idworker"})
 public class Application {
-    // git config --global http.sslBackend "openssl"
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

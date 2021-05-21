@@ -4,17 +4,21 @@ import com.kong.enums.ExceptionEnum;
 import com.kong.pojo.bo.UserBO;
 import com.kong.service.UserService;
 import com.kong.utils.IMOOCJSONResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("passport")
+@Api(value = "注册登录", tags = {"用于注册登录的相关接口"})
 public class PassportController {
     @Autowired
     private UserService userService;
 
     @GetMapping("/usernameIsExist")
+    @ApiOperation(value = "用户名是否存在", notes = "用户名是否存在", httpMethod = "GET")
     public IMOOCJSONResult usernameIsExist(@RequestParam String username) {
         //1. 判断用户名不为空
         if (StringUtils.isBlank(username)) {
@@ -30,6 +34,7 @@ public class PassportController {
     }
 
     @PostMapping("/register")
+    @ApiOperation(value = "用户注册", notes = "用户注册", httpMethod = "POST")
     public IMOOCJSONResult register(@RequestBody UserBO userBO) {
         String username = userBO.getUsername();
         String password = userBO.getPassword();

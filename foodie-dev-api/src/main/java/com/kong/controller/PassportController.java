@@ -26,7 +26,7 @@ public class PassportController {
         }
         //2. 查找注册的用户名是否存在
         boolean isExist = userService.queryUsernameIsExist(username);
-        if (! isExist) {
+        if (isExist) {
             return IMOOCJSONResult.errorMsg(ExceptionEnum.NAME_EXISTED.getMsg());
         }
         //3. 请求成功

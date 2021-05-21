@@ -1,14 +1,12 @@
 package com.kong.controller;
 
 import com.kong.enums.ExceptionEnum;
+import com.kong.pojo.bo.UserBO;
 import com.kong.service.UserService;
 import com.kong.utils.IMOOCJSONResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("passport")
@@ -28,6 +26,35 @@ public class PassportController {
             return IMOOCJSONResult.errorMsg(ExceptionEnum.NAME_EXISTED.getMsg());
         }
         //3. 请求成功
+        return IMOOCJSONResult.ok();
+    }
+
+    @PostMapping("/register")
+    public IMOOCJSONResult register(@RequestBody UserBO userBO) {
+        String username = userBO.getUsername();
+        String password = userBO.getPassword();
+        String confirmPassword = userBO.getConfirmPassword();
+
+        // 0. 判断用户名和密码必须不为空
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password) || StringUtils.isBlank(confirmPassword)) {
+            return IMOOCJSONResult.errorMsg(ExceptionEnum.NEED_USERNAME_PASSWORD.getMsg());
+        }
+        // 1. 查询用户名是否存在
+        boolean isExist = userService.queryUsernameIsExist(username);
+        if (isExist) {
+            return IMOOCJSONResult.errorMsg(ExceptionEnum.NAME_EXISTED.getMsg());
+        }
+        // 2. 密码长度不能少于6位
+        if (password.length() < 6) {
+            return IMOOCJSONResult.errorMsg(ExceptionEnum.PASSWORD_TOO_SHORT.getMsg());
+        }
+        // 3. 判断两次密码是否一致
+        if (!password.equals(confirmPassword)) {
+            return IMOOCJSONResult.errorMsg(ExceptionEnum.PASSWORD_INCONSISTENT.getMsg());
+        }
+        // 4. 实现注册
+        userService.createUser(userBO);
+
         return IMOOCJSONResult.ok();
     }
 }

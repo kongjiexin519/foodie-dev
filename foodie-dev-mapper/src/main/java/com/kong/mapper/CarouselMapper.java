@@ -1,17 +1,8 @@
 package com.kong.mapper;
 
+import com.kong.my.MyMapper;
 import com.kong.pojo.Carousel;
 
-public interface CarouselMapper {
-    int deleteByPrimaryKey(String id);
+public interface CarouselMapper extends MyMapper<Carousel> {
 
-    int insert(Carousel record);
-
-    int insertSelective(Carousel record);
-
-    Carousel selectByPrimaryKey(String id);
-
-    int updateByPrimaryKeySelective(Carousel record);
-
-    int updateByPrimaryKey(Carousel record);
 }

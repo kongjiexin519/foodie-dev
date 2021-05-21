@@ -1,17 +1,8 @@
 package com.kong.mapper;
 
+import com.kong.my.MyMapper;
 import com.kong.pojo.ItemsImg;
 
-public interface ItemsImgMapper {
-    int deleteByPrimaryKey(String id);
+public interface ItemsImgMapper extends MyMapper<ItemsImg> {
 
-    int insert(ItemsImg record);
-
-    int insertSelective(ItemsImg record);
-
-    ItemsImg selectByPrimaryKey(String id);
-
-    int updateByPrimaryKeySelective(ItemsImg record);
-
-    int updateByPrimaryKey(ItemsImg record);
 }

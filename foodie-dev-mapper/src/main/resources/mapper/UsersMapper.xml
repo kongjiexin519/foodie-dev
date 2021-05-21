@@ -15,8 +15,4 @@
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
   </resultMap>
-  <sql id="Base_Column_List">
-    id, username, `password`, nickname, realname, face, mobile, email, sex, birthday, 
-    created_time, updated_time
-  </sql>
 </mapper>

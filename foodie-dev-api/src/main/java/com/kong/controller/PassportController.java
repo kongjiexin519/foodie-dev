@@ -4,13 +4,18 @@ import com.kong.enums.ExceptionEnum;
 import com.kong.pojo.Users;
 import com.kong.pojo.bo.UserBO;
 import com.kong.service.UserService;
+import com.kong.utils.CookieUtils;
 import com.kong.utils.IMOOCJSONResult;
+import com.kong.utils.JsonUtils;
 import com.kong.utils.MD5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("passport")
@@ -37,7 +42,7 @@ public class PassportController {
 
     @PostMapping("/register")
     @ApiOperation(value = "用户注册", notes = "用户注册", httpMethod = "POST")
-    public IMOOCJSONResult register(@RequestBody UserBO userBO) {
+    public IMOOCJSONResult register(@RequestBody UserBO userBO, HttpServletRequest request, HttpServletResponse response) {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
         String confirmPassword = userBO.getConfirmPassword();
@@ -60,14 +65,18 @@ public class PassportController {
             return IMOOCJSONResult.errorMsg(ExceptionEnum.PASSWORD_INCONSISTENT.getMsg());
         }
         // 4. 实现注册
-        userService.createUser(userBO);
+        Users userResult = userService.createUser(userBO);
+
+        userResult = setNullProperty(userResult);
+
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
 
         return IMOOCJSONResult.ok();
     }
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
-    public IMOOCJSONResult login(@RequestBody UserBO userBO) throws Exception{
+    public IMOOCJSONResult login(@RequestBody UserBO userBO, HttpServletRequest request, HttpServletResponse response) throws Exception{
         String username = userBO.getUsername();
         String password = userBO.getPassword();
 
@@ -81,6 +90,20 @@ public class PassportController {
             return IMOOCJSONResult.ok(userResult);
         }
 
+        userResult = setNullProperty(userResult);
+
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+
         return IMOOCJSONResult.ok(userResult);
+    }
+
+    private Users setNullProperty(Users userResult) {
+        userResult.setPassword(null);
+        userResult.setMobile(null);
+        userResult.setEmail(null);
+        userResult.setCreatedTime(null);
+        userResult.setUpdatedTime(null);
+        userResult.setBirthday(null);
+        return userResult;
     }
 }

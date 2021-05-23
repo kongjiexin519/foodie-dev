@@ -9,7 +9,6 @@ import com.kong.service.UserService;
 import com.kong.utils.DateUtil;
 import com.kong.utils.MD5Utils;
 import org.n3r.idworker.Sid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

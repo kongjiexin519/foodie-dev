@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
 
 @RestController
 @RequestMapping("passport")
@@ -105,5 +106,14 @@ public class PassportController {
         userResult.setUpdatedTime(null);
         userResult.setBirthday(null);
         return userResult;
+    }
+
+    @PostMapping("/logout")
+    @ApiOperation(value = "用户退出登录", notes = "用户退出登录", httpMethod = "POST")
+    public IMOOCJSONResult logout(@RequestParam String userId, HttpServletRequest request, HttpServletResponse response) {
+        CookieUtils.deleteCookie(request, response, "user");
+        // TODO 用户退出登录，需要清空购物车
+        // TODO 分布式会话中需要清楚用户数据
+        return IMOOCJSONResult.ok();
     }
 }

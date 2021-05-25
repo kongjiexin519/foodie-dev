@@ -3,8 +3,11 @@ package com.kong.service.impl;
 import com.kong.mapper.CategoryMapper;
 import com.kong.pojo.Carousel;
 import com.kong.pojo.Category;
+import com.kong.pojo.vo.CategoryVO;
 import com.kong.service.CategoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -16,6 +19,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryMapper categoryMapper;
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<Category> queryAllRootLevelCat() {
         Example example = new Example(Category.class);
         Example.Criteria criteria = example.createCriteria();
@@ -23,5 +27,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<Category> categories = categoryMapper.selectByExample(example);
         return categories;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<CategoryVO> getSubCatList(Integer rootCatId) {
+        return categoryMapper.getSubCatList(rootCatId);
     }
 }

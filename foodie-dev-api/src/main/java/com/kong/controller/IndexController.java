@@ -1,15 +1,19 @@
 package com.kong.controller;
 
+import com.kong.enums.ExceptionEnum;
 import com.kong.enums.YesOrNo;
 import com.kong.pojo.Carousel;
 import com.kong.pojo.Category;
+import com.kong.pojo.vo.CategoryVO;
 import com.kong.service.CarouselService;
 import com.kong.service.CategoryService;
 import com.kong.utils.IMOOCJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,5 +46,18 @@ public class IndexController {
     public IMOOCJSONResult cats() {
         List<Category> categories = categoryService.queryAllRootLevelCat();
         return IMOOCJSONResult.ok(categories);
+    }
+
+    @GetMapping("/subCat/{rootCatId}")
+    @ApiOperation(value = "获取商品子分类", notes = "获取商品子分类", httpMethod = "GET")
+    public IMOOCJSONResult subCat(@ApiParam(name = "rootCatId", value = "一级分类id", required = true)
+                                  @PathVariable Integer rootCatId){
+        if (rootCatId == null) {
+            IMOOCJSONResult.errorMsg(ExceptionEnum.CATEGORY_NOT_EXIST.getMsg());
+        }
+
+        List<CategoryVO> subCatList = categoryService.getSubCatList(rootCatId);
+
+        return IMOOCJSONResult.ok(subCatList);
     }
 }

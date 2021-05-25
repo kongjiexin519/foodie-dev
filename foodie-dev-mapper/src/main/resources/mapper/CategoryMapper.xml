@@ -11,7 +11,35 @@
     <result column="cat_image" jdbcType="VARCHAR" property="catImage" />
     <result column="bg_color" jdbcType="VARCHAR" property="bgColor" />
   </resultMap>
-  <sql id="Base_Column_List">
-    id, `name`, `type`, father_id, logo, slogan, cat_image, bg_color
-  </sql>
+
+  <!--结果映射 -->
+  <!--可以将查询结果映射为复杂类型的JAVA对象 适用于JAVA对象保存多表关联结果-->
+  <resultMap id="myCategoryVO" type="com.kong.pojo.vo.CategoryVO">
+    <!--设置主键字段与属性映射-->
+    <id column="id" property="id"/>
+    <!--设置非主键字段与属性映射-->
+    <result column="name" property="name"/>
+    <result column="type" property="type"/>
+    <result column="fatherId" property="fatherId"/>
+
+    <!--
+      collection: 用于定义关联的list集合类型的封装规则
+      property：对应三级分类的list属性名
+      ofType：集合的类型，三级分类的VO
+    -->
+    <collection property="subCatList" ofType="com.kong.pojo.vo.SubCategoryVO">
+      <id column="subId" property="subId"/>
+      <result column="subName" property="subName"/>
+      <result column="subType" property="subType"/>
+      <result column="subFatherId" property="subFatherId"/>
+    </collection>
+  </resultMap>
+
+  <select id="getSubCatList" resultMap="myCategoryVO" parameterType="int">
+    select
+        f.id as id, f.name as name, f.type as type, f.father_id as fatherId,
+        c.id as subId, c.name as subName, c.type as subType, c.father_id as subFatherId
+    from category f left join category c on f.id = c.father_id
+    where f.father_id = #{rootCatId}
+  </select>
 </mapper>

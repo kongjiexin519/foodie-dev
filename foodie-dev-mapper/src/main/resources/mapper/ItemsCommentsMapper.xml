@@ -13,8 +13,15 @@
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
   </resultMap>
-  <sql id="Base_Column_List">
-    id, user_id, item_id, item_name, item_spec_id, sepc_name, comment_level, content, 
-    created_time, updated_time
-  </sql>
+
+  <select id="queryItemComments" parameterType="Map" resultType="com.kong.pojo.vo.ItemCommentVO">
+    select
+        ic.comment_level as commentLevel, ic.content as content, ic.spec_name as sepcName,
+        ic.created_time as createdTime, u.face as userFace, u.nickname as nickname
+    from items_comments ic left join users u on ic.user_id = u.id
+    where ic.item_id = #{paramsMap.itemId}
+    <if test="paramsMap.level != null and paramsMap.level != '' ">
+      and ic.comment_level = #{paramsMap.level}
+    </if>
+  </select>
 </mapper>

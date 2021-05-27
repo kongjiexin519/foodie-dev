@@ -1,17 +1,23 @@
 package com.kong.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.kong.enums.CommentLevelEnum;
 import com.kong.mapper.*;
 import com.kong.pojo.*;
 import com.kong.pojo.vo.CommentLevelCountsVO;
+import com.kong.pojo.vo.ItemCommentVO;
 import com.kong.service.ItemService;
+import com.kong.utils.PagedGridResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -87,5 +93,30 @@ public class ItemServiceImpl implements ItemService {
             condition.setCommentLevel(level);
         }
         return itemsCommentsMapper.selectCount(condition);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("itemId", itemId);
+        map.put("level", level);
+
+        PageHelper.startPage(page, pageSize);
+
+        List<ItemCommentVO> list = itemsCommentsMapper.queryItemComments(map);
+
+        return setterPagedGrid(list, page);
+    }
+
+    private PagedGridResult setterPagedGrid(List<?> list, Integer page) {
+        PageInfo<?> pageList = new PageInfo<>(list);
+        PagedGridResult grid = new PagedGridResult();
+        grid.setPage(page);
+        grid.setRows(list);
+        grid.setTotal(pageList.getPages());
+        grid.setRecords(pageList.getTotal());
+
+        return grid;
     }
 }

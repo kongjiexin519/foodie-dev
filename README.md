@@ -11,6 +11,7 @@ http://localhost:8088/doc.html
 http://localhost:8080/foodie-shop/
 
 #####  Failed to connect to github.com port 443: Operation timed out
-git config --global http.sslBackend "openssl"  
+git config --global http.sslBackend "openssl" 
+##### LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to github.com:443  
 git config --global --unset http.proxy  
-git config --global --unset https.proxy
+ 

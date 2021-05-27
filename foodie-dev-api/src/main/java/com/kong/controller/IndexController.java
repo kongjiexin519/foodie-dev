@@ -5,6 +5,7 @@ import com.kong.enums.YesOrNo;
 import com.kong.pojo.Carousel;
 import com.kong.pojo.Category;
 import com.kong.pojo.vo.CategoryVO;
+import com.kong.pojo.vo.NewItemsVO;
 import com.kong.service.CarouselService;
 import com.kong.service.CategoryService;
 import com.kong.utils.IMOOCJSONResult;
@@ -59,5 +60,17 @@ public class IndexController {
         List<CategoryVO> subCatList = categoryService.getSubCatList(rootCatId);
 
         return IMOOCJSONResult.ok(subCatList);
+    }
+
+    @GetMapping("/sixNewItems/{rootCatId}")
+    @ApiOperation(value = "查询每个一级分类下的最新6条商品数据", notes = "查询每个一级分类下的最新6条商品数据", httpMethod = "GET")
+    public IMOOCJSONResult sixNewItems(@ApiParam(name = "rootCatId", value = "一级分类id", required = true)
+                                       @PathVariable Integer rootCatId) {
+        if (rootCatId == null) {
+            return IMOOCJSONResult.errorMsg(ExceptionEnum.CATEGORY_NOT_EXIST.getMsg());
+        }
+
+        List<NewItemsVO> list = categoryService.getSixNewItemsLazy(rootCatId);
+        return IMOOCJSONResult.ok(list);
     }
 }

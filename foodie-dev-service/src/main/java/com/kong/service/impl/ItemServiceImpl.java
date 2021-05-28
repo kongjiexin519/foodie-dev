@@ -7,6 +7,7 @@ import com.kong.mapper.*;
 import com.kong.pojo.*;
 import com.kong.pojo.vo.CommentLevelCountsVO;
 import com.kong.pojo.vo.ItemCommentVO;
+import com.kong.pojo.vo.SearchItemsVO;
 import com.kong.service.ItemService;
 import com.kong.utils.DesensitizationUtil;
 import com.kong.utils.PagedGridResult;
@@ -109,6 +110,19 @@ public class ItemServiceImpl implements ItemService {
         for (ItemCommentVO vo : list) {
             vo.setNickname(DesensitizationUtil.commonDisplay(vo.getNickname()));
         }
+
+        return setterPagedGrid(list, page);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("keywords", keywords);
+        map.put("sort", sort);
+
+        PageHelper.startPage(page, pageSize);
+        List<SearchItemsVO> list = itemsMapper.searchItems(map);
 
         return setterPagedGrid(list, page);
     }

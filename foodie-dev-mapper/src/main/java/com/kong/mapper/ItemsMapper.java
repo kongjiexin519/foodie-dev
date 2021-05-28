@@ -10,4 +10,5 @@ import java.util.Map;
 
 public interface ItemsMapper extends MyMapper<Items> {
     public List<SearchItemsVO> searchItems(@Param("paramsMap") Map<String, Object> map);
+    public List<SearchItemsVO> searchItemsByThirdCat(@Param("paramsMap") Map<String, Object> map);
 }

@@ -2,18 +2,24 @@ package com.kong.service.impl;
 
 import com.kong.mapper.UserAddressMapper;
 import com.kong.pojo.UserAddress;
+import com.kong.pojo.bo.AddressBO;
 import com.kong.service.AddressService;
+import org.n3r.idworker.Sid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class AddressServiceImpl implements AddressService {
     @Resource
     private UserAddressMapper userAddressMapper;
+    @Resource
+    private Sid sid;
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -21,5 +27,27 @@ public class AddressServiceImpl implements AddressService {
         UserAddress userAddress = new UserAddress();
         userAddress.setUserId(userId);
         return userAddressMapper.select(userAddress);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void addNewUserAddress(AddressBO addressBO) {
+        // 1. 判断当前用户是否存在地址，如果没有，则新增为默认地址
+        int isDefault = 0;
+        List<UserAddress> addressList = this.queryAll(addressBO.getUserId());
+        if (addressList == null || addressList.isEmpty()) {
+            isDefault = 1;
+        }
+        // 2. 保存地址到数据库
+        UserAddress newAddress = new UserAddress();
+        BeanUtils.copyProperties(addressBO, newAddress);
+
+        String addressId = sid.nextShort();
+        newAddress.setId(addressId);
+        newAddress.setIsDefault(isDefault);
+        newAddress.setCreatedTime(new Date());
+        newAddress.setUpdatedTime(new Date());
+
+        userAddressMapper.insert(newAddress);
     }
 }

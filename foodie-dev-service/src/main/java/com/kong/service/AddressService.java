@@ -11,4 +11,7 @@ public interface AddressService {
 
     // 用户新增地址
     public void addNewUserAddress(AddressBO addressBO);
+
+    // 用户修改地址
+    public void updateUserAddress(AddressBO addressBO);
 }

@@ -1,5 +1,6 @@
 package com.kong.service.impl;
 
+import com.kong.enums.YesOrNo;
 import com.kong.mapper.UserAddressMapper;
 import com.kong.pojo.UserAddress;
 import com.kong.pojo.Users;
@@ -78,5 +79,36 @@ public class AddressServiceImpl implements AddressService {
         userAddress.setUserId(userId);
 
         userAddressMapper.delete(userAddress);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void updateUserAddressToBeDefault(String userId, String addressId) {
+        // 1.查找默认地址，设置为不默认
+        UserAddress queryAddress = new UserAddress();
+        queryAddress.setUserId(userId);
+        queryAddress.setIsDefault(YesOrNo.YES.getType());
+
+        List<UserAddress> addressList = userAddressMapper.select(queryAddress);
+        for (UserAddress ua : addressList) {
+            ua.setIsDefault(YesOrNo.NO.getType());
+            Example userAddressExample = new Example(UserAddress.class);
+            Example.Criteria userExampleCriteria = userAddressExample.createCriteria();
+            userExampleCriteria.andEqualTo("id", ua.getId());
+            userExampleCriteria.andEqualTo("userId", ua.getUserId());
+            userAddressMapper.updateByExampleSelective(ua, userAddressExample);
+        }
+
+        // 2.根据地址id修改为默认的地址
+        UserAddress defaultAddress = new UserAddress();
+        defaultAddress.setId(addressId);
+        defaultAddress.setUserId(userId);
+        defaultAddress.setIsDefault(YesOrNo.YES.getType());
+
+        Example defaultAddressExample = new Example(UserAddress.class);
+        Example.Criteria defaultExampleCriteria = defaultAddressExample.createCriteria();
+        defaultExampleCriteria.andEqualTo("id", addressId);
+        defaultExampleCriteria.andEqualTo("userId", userId);
+        userAddressMapper.updateByExampleSelective(defaultAddress, defaultAddressExample);
     }
 }

@@ -14,4 +14,7 @@ public interface AddressService {
 
     // 用户修改地址
     public void updateUserAddress(AddressBO addressBO);
+
+    // 根据用户id和地址id伤处对应的用户地址信息
+    public void deleteUserAddress(String userId, String addressId);
 }
